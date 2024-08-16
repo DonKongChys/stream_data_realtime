@@ -1,4 +1,5 @@
-venv/
+.venv/
+cassandra/
 dags/__pycache__/
 .vscode/
 target/

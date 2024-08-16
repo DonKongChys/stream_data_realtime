@@ -1,11 +1,12 @@
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+import uuid
 
 
 default_args = {
-    'owner': 'airscholar',
-    'start_date': datetime(2024, 7, 4, 10, 00)
+    'owner': 'tridoan',
+    'start_date': datetime(2024, 8, 12, 10, 00)
 }
 
 
@@ -35,6 +36,7 @@ def format_data(res):
     data['phone']=res['phone']
     data['registered_date'] = res['registered']['date']
     data['picture'] = res['picture']['medium']
+    data['id']= str(uuid.uuid4())
     
     return data
     
@@ -47,9 +49,9 @@ def stream_data():
     
     producer = KafkaProducer(bootstrap_servers=['broker:29092'], max_block_ms=5000)
     curr_tiem= time.time()
-    
+    print("Sending data to kafka...")
     while True:
-        if time.time() > curr_tiem +180:
+        if time.time() > curr_tiem +360:
             break
         try:
             res = get_data()
@@ -63,9 +65,9 @@ def stream_data():
 with DAG(
     'user_automation', 
     default_args=default_args,
-    schedule='@daily',
+    # schedule='@daily',
     catchup=False
-) as dad:
+) as dag:
     stream_task = PythonOperator(
         task_id='stream_data_from_api',
         python_callable=stream_data
