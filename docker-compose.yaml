@@ -211,7 +211,6 @@ services:
     hostname: cassandra
     ports:
       - "9042:9042"
-      - "9160:9160"  # Port for Spark (if needed)
     environment:
       - CASSANDRA_USER=cassandra
       - CASSANDRA_PASSWORD=cassandra
@@ -222,17 +221,19 @@ services:
       # - CASSANDRA_LISTEN_ADDRESS=cassandra
       # - CASSANDRA_BROADCAST_ADDRESS=cassandra
       # - CASSANDRA_BROADCAST_RPC_ADDRESS=cassandra
-      - CASSANDRA_AUTHENTICATOR=PasswordAuthenticator
-      - CASSANDRA_PASSWORD_SEEDER=yes
+      # - CASSANDRA_AUTHENTICATOR=PasswordAuthenticator
+      # - CASSANDRA_PASSWORD_SEEDER=yes
     volumes:
-      - ./cassandra:/var/lib/cassandra
+      - ./cassandra:/bitnami
+
     networks:
       - confluent
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2'
 
 networks:
   confluent:
+    driver: bridge
 
